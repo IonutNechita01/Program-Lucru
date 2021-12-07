@@ -1,8 +1,10 @@
 from openpyxl import load_workbook
+from tkinter import *
 import random
 
+
 wb = load_workbook('TbP.xlsx')
-wr = load_workbook('Prg.xlsx')
+wr = load_workbook('Pgr.xlsx')
 WriteInP = wr['Plasatori']
 ReadFromP = wb['DP']
 ReadFromBA = wb['DBA']
@@ -63,45 +65,57 @@ def WriteInPl(WriteIn):
     wr.save('Pgr.xlsx')
 def ComplPDi(Day, j):
     for i in range(len(Disp)):
-            if Disp[i][j] in 'O' and Disp[i][0] not in Day and len(Day) < 2:
+            if Disp[i][j] == 'O' and Disp[i][0] not in Day and len(Day) < 2:
                 if Disp[i][15] <= Minim(j):
+                    Disp[i][j] = 'X'
                     Day.append(Disp[i][0])
                     Disp[i][15] += 1
-                else:
-                    continue
             if len(Day) == 2:
                 return Day
 def ComplPDu(Day, j):
         for i in range(len(Disp)):
-                if Disp[i][j] in 'O' and Disp[i][0] not in Day and len(Day) < 6:
+                if Disp[i][j] == 'O' and Disp[i][0] not in Day and len(Day) < 6:
                     if Disp[i][15] <= Minim(j) + 1:
+                        Disp[i][j] = 'X'
                         Day.append(Disp[i][0])
                         Disp[i][15] += 1
-                    else:
-                        continue
                 else:
                     return Day
                 if len(Day) == 6:
                     return Day
-
-Read(ReadFromP)
-NrTure = 0
-random.shuffle(Disp)
-while NrTure < 41:
+def ComplPlasatori():
+    Read(ReadFromP)
     NrTure = 0
-    j = 1
-    for Day in Days:
-        ComplPDi(Day,j)
-        random.shuffle(Disp)
-        j += 1
-    j = 8
-    for Day in Days:
-        ComplPDu(Day,j)
-        random.shuffle(Disp)
-        j += 1
+    random.shuffle(Disp)
+    while NrTure < 40:
+        NrTure = 0
+        j = 1
+        for Day in Days:
+            ComplPDi(Day,j)
+            random.shuffle(Disp)
+            j += 1
+        j = 8
+        for Day in Days:
+            ComplPDu(Day,j)
+            random.shuffle(Disp)
+            j += 1
+        for i in range(len(Disp)):
+            NrTure += Disp[i][15]
+    Done.grid(row = 2, column = 0)
+    NrTureAfis = Label(root, text=NrTure)
+    NrTureAfis.grid(row = 3, column = 0)
     for i in range(len(Disp)):
-        NrTure += Disp[i][15]
-print(NrTure)
-for i in range(len(Disp)):
-    print(Disp[i][0], ':',Disp[i][15])
-WriteInPl(WriteInP)
+        print(Disp[i][0], ':',Disp[i][15])
+    WriteInPl(WriteInP)
+
+
+root = Tk()
+Plasatori = Label(root, text='Plasatori')
+Done = Label(root, text='Done')
+ButtonPlasatori = Button(root, text = 'Generare Program Plasatori', padx = 15 ,pady = 5, command = ComplPlasatori)
+
+
+Plasatori.grid(row = 0, column = 0)
+ButtonPlasatori.grid(row = 1, column = 0)
+
+root.mainloop()
